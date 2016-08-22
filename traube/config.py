@@ -45,7 +45,7 @@ def parseSources(parser):
         name = s['name'].strip().replace(' ', '_')
         source = {}
         source['dir'] = (s['dir'][1:] if s['dir'].startswith('.') else s['dir']).strip()
-        source['keys'] = map(lambda x: x.strip(), s['keys'].split(','))
+        source['keys'] = list(map(lambda x: x.strip(), s['keys'].split(',')))
         sources[name] = source
     return sources
 
