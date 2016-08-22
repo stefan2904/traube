@@ -20,7 +20,7 @@ def parseGlobal(parser, base):
         raise KeyError('Invalid config... No remote/index/key.')
     idx = glob['index']
     if not idx.startswith('/'):
-        idx = idx[1:] if idx.startswith('.') else idx
+        idx = (idx[1:] if idx.startswith('.') else idx).strip()
         idx = '/' + idx if not idx.startswith('/') else idx
         idx = base + idx
 
@@ -42,10 +42,10 @@ def parseSources(parser):
         s = parser[section]
         if 'dir' not in s or 'keys' not in s:
             raise KeyError('Invalid config... No dir/keys for %s' % s['name'])
-        name = s['name'].replace(' ', '_')
+        name = s['name'].strip().replace(' ', '_')
         source = {}
-        source['dir'] = s['dir'][1:] if s['dir'].startswith('.') else s['dir']
-        source['keys'] = s['keys'].split(',')
+        source['dir'] = (s['dir'][1:] if s['dir'].startswith('.') else s['dir']).strip()
+        source['keys'] = map(lambda x: x.strip(), s['keys'].split(','))
         sources[name] = source
     return sources
 
