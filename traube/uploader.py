@@ -17,7 +17,7 @@ class Uploader():
         self.idx = idx
         self.crypto = crypto
         print('# TODO: create temporary dir $tmp')
-        self.tmp = '/tmp'
+        self.tmp = '/tmp/traube'
 
     def upload(self, name, dir, keys):
         print('   %s: uploading %s ...' % (name, dir))
@@ -28,12 +28,15 @@ class Uploader():
                 print('      already in index. skipping ...')
             else:
                 alias = self.crypto.getRandomBits()
-                self.__doUpload(alias, path)
+                self.__doUpload(alias, path, keys)
                 self.idx.add(name, alias, file)
 
-    def __doUpload(self, alias, path):
-        print('# TODO: encrypt file $path to $tmp/$alias')
-        print('# TODO: upload $tmp/$alias to $self.remote')
+    def __doUpload(self, alias, path, keys):
+        target = self.tmp + '/' + alias
+        print('     encrypt file %s to %s for %d keys' % (path, target, len(keys)))
+        self.crypto.encryptFile(path, target, keys)
+
+        print('     # TODO: upload %s to %s' % (target, self.remote))
 
 
 @click.command()
@@ -55,6 +58,7 @@ def main(config):
         keys = data['keys']
         upl.upload(name, dir, keys)
 
+    print('')
     idx.save()
 
 

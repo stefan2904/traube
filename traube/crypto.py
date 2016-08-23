@@ -40,7 +40,7 @@ class Crypto():
             fingerprint = keys[user]
             if not self.__isInPubring(fingerprint):
                 raise Exception('Key of %s not in public keyring ...' % user)
-            self.keys['user'] = fingerprint
+            self.keys[user] = fingerprint
 
     def decrypt(self, ciphertext):
         return str(self.gpg.decrypt(ciphertext))
@@ -49,6 +49,15 @@ class Crypto():
         ciphertext = self.gpg.encrypt(plaintext, self.own_key)
         # print(ciphertext.status)
         return str(ciphertext)
+
+    def encryptFile(self, file, target, users):
+        recipients = []
+        for user in users:
+            recipients.append(self.keys[user])
+        with open(file, 'r') as f:
+            status = self.gpg.encrypt(f, *recipients, output=target, armor=True)
+        print(status.status)
+
 
     def getRandomBits(self, num=128):
         # not a secure random,
